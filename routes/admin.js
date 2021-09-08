@@ -31,5 +31,11 @@ router.post('/add-product',(req,res)=>{
    
   });
 })
+router.get('/delete-product',(req,res)=>{
+  let proId=req.query.id
+  console.log(proId)
+  console.log(req.query.name)
+}
+)
 module.exports = router;
 
