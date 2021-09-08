@@ -24,7 +24,7 @@ db.connect((err)=>{
   else console.log('data base connected')
 })
 app.use(fileUpload());
-app.use(session({secret:'Key',cookie:{maxAge:60000}}))
+app.use(session({secret:'Key',cookie:{maxAge:180000}}))
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
