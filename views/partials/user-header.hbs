@@ -12,16 +12,35 @@
               <a class="nav-link active" aria-current="page" href="/">Products</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Cart</a>
+              <a class="nav-link" href="/cart">Cart</a>
             </li>
+            {{#if user}}
             <li class="nav-item">
               <a class="nav-link" href="#">Orders</a>
             </li>
+            {{/if}}
           </ul>
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
+          <div class="dropdown">
+  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+   {{#if user}}
+      {{user.name}}
+    {{else}}
+    Account
+   {{/if}}
+   
+   
+  </a>
+
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    {{#if user}}
+    <li><a class="dropdown-item" href="/logout">Logout</a></li>
+    {{else}}
+    <li><a class="dropdown-item" href="/login">Login</a></li>
+    {{/if}}
+    
+  </ul>
+</div>
+
         </div>
       </div>
     </nav>

@@ -1,36 +1,62 @@
+const { response } = require('express');
 var express = require('express');
+const session = require('express-session');
 var router = express.Router();
-
+var productHelper=require('../helpers/product-helpers')
+var userHelper  =require('../helpers/user-helpers')
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-  let products=[
-    {
-      name:"Aagyeyi Fabulous Kurtis",
-      category:"Kurtis",
-      Description:"Fabric:Rayon\nSleeve Length:Three-Quarter Sleeves\nPattern:Embroidered",
-      image:"https://images.meesho.com/images/products/42511545/dzye1_512.jpg"
-    },
-    {
-      name:"Bbanita Ensemble Kurtis",
-      category:"Kurtis",
-      Description:"Fabric:Cotton \nSleeve Length:Three-Quarter Sleeves",
-      image:"https://images.meesho.com/images/products/42232997/ujudp_512.jpg"
-    },
-    {
-      name:"C kurtis",
-      category:"Kurtis",
-      Description:"Fabric:Rayon\nSleeve Length:Three-Quarter Sleeves\nPattern:Printed",
-      image:"https://images.meesho.com/images/products/42691244/hhu3a_512.jpg"
-    },
-    {
-      name:"Adrika Alluring Kurtis",
-      category:"Kurtis",
-      Description:"Fabric:Cotton\nSleeve Length:Three-Quarter Sleeves\nPattern:Printed",
-      image:"https://images.meesho.com/images/products/42511545/dzye1_512.jpg"
-    }
-  ]
-  res.render('index', {products,admin:false});
+  let user=req.session.user
+  console.log(user)
+  productHelper.getAllProducts().then((product)=>{
+    res.render('user/view-products',{admin:false,product,user})
+  })
+  
+  
 });
+router.get('/login',function(req,res){
+  if(req.session.loggedIn){
+    res.redirect('/')
+  }
+  else{
+  res.render('user/login',{"loginErr":req.session.loginErr})
+  req.session.loginErr=false
+  }
+})
+router.get('/signup',(req,res)=>{
+  res.render('user/signup')
+})
+router.post('/signup',(req,res)=>{
+  userHelper.doSignup(req.body).then((response)=>{
+    console.log(response)
+    res.render('user/view-products')
+  })
 
+})
+
+router.post('/login',(req,res)=>{
+  userHelper.doLogin(req.body).then((response)=>{
+    console.log(response)
+    if(response.status){
+      req.session.loggedIn=true
+      req.session.user = response.user
+
+      res.redirect('/')
+    }
+    else{
+      req.session.loginErr=true
+      res.redirect('/login')
+    }
+  })
+ 
+})
+router.get('/logout',(req,res)=>{
+
+  req.session.destroy()
+  res.redirect('/')
+})
+router.get('/cart',(req,res)=>{
+  console.log('cart')
+})
 module.exports = router;

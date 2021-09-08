@@ -9,7 +9,7 @@ var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
 var hbs=require('express-handlebars')
 var app = express();
-
+var session= require('express-session')
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -24,6 +24,8 @@ db.connect((err)=>{
   else console.log('data base connected')
 })
 app.use(fileUpload());
+app.use(session({secret:'Key',cookie:{maxAge:60000}}))
+
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
 
