@@ -1,0 +1,21 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">1</th>
+      <th scope="col">Item</th>
+      <th scope="col">Title</th>
+      <th scope="col">Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each products}}
+    <tr>
+      <td>1</td>
+      <td><img src="/product-images/{{this._id}}.jpg" class="img-thumbnail " style="width:50px;height:auto" alt="..."></td>
+      <td>{{this.name}}</td>
+      <td><button class="cart-item-count btn btn-primary mr-3" > + </button>  1  <button class="cart-item-count btn btn-primary mr-3" > - </button></td>
+      <td><a href="" class="btn btn-danger">Remove</a></td> 
+    </tr>
+   {{/each}}
+  </tbody>
+</table>

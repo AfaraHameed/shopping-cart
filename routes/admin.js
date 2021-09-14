@@ -1,6 +1,8 @@
+const { response } = require('express');
 var express = require('express');
 var router = express.Router();
 var productHelper= require('../helpers/product-helpers'); 
+const fs = require('fs')
 /* GET users listing. */
 router.get('/', function(req, res, next) {
 
@@ -31,11 +33,39 @@ router.post('/add-product',(req,res)=>{
    
   });
 })
-router.get('/delete-product',(req,res)=>{
-  let proId=req.query.id
-  console.log(proId)
-  console.log(req.query.name)
+router.get('/delete-product/:id',(req,res)=>{
+  let proId=req.params.id
+  console.log("proId:"+proId)
+  productHelper.deleteProduct(proId).then((response)=>{
+   
+    const path = './public/product-images/'+proId+'.jpg'
+
+try {
+  fs.unlinkSync(path)
+  console.log("Deleted")
+} catch(err) {
+  console.error(err)
+}
+    res.redirect('/admin')
+  })
 }
 )
+router.get('/edit-product/:id',(req,res)=>{
+  productHelper.getProductDetails(req.params.id).then((product)=>{
+    res.render('admin/edit-product',{product})
+  })
+ 
+})
+router.post('/edit-product/:id',(req,res)=>{
+  productHelper.updateProduct(req.params.id,req.body).then(()=>{
+    console.log('updated body:'+req.body)
+    res.redirect('/admin')
+    if(req.files.image)
+    {
+      let image=req.files.image
+      image.mv('./public/product-images/'+req.params.id+'.jpg')
+    }
+  })
+})
 module.exports = router;
 
