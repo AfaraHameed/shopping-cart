@@ -1,19 +1,21 @@
-<table class="table">
+<table class="table container">
   <thead>
     <tr>
-      <th scope="col">1</th>
+      
       <th scope="col">Item</th>
       <th scope="col">Title</th>
+      <th scope="col">Price</th>
       <th scope="col">Quantity</th>
     </tr>
   </thead>
   <tbody>
-    {{#each products}}
+    {{#each cartItems}}
     <tr>
-      <td>1</td>
-      <td><img src="/product-images/{{this._id}}.jpg" class="img-thumbnail " style="width:50px;height:auto" alt="..."></td>
-      <td>{{this.name}}</td>
-      <td><button class="cart-item-count btn btn-primary mr-3" > + </button>  1  <button class="cart-item-count btn btn-primary mr-3" > - </button></td>
+    
+      <td><img src="/product-images/{{this.product._id}}.jpg" class="img-thumbnail " style="width:50px;height:auto" alt="..."></td>
+      <td>{{this.product.name}}</td>
+      <td>{{this.product.price}}</td>
+      <td><button class="cart-item-count  me-3" style="background-color: steelblue;color:white" onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1)">-</button>  <span id="{{this.product._id}}">{{this.quantity}}</span>  <button class="cart-item-count  ms-3" style="background-color: steelblue; color:white;width:29px" onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)">+</button></td>
       <td><a href="" class="btn btn-danger">Remove</a></td> 
     </tr>
    {{/each}}

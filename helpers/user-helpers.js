@@ -54,8 +54,8 @@ module.exports={
             let proExist=userCart.products.findIndex(products=>products.item==proId)
             console.log(proExist)
             if(proExist!=-1)
-            {
-                db.get().collection(collection.CART_COLLECTION).updateOne({'products.item':objectId(proId)},
+            { 
+                db.get().collection(collection.CART_COLLECTION).updateOne({user:objectId(userId),'products.item':objectId(proId)},
                 
                 {
                     $inc:{'products.$.quantity':1}
@@ -95,25 +95,32 @@ module.exports={
                     $match:{user:objectId(userId)}
                 },
                 {
+                    $unwind:'$products'
+                },
+                {
+                    $project:{
+                            item:'$products.item',
+                            quantity:'$products.quantity'
+                    }
+                },
+                {
                     $lookup:{
                         from:collection.PRODUCT_COLLECTION,
-                        let:{proList:'$products'},
-                        pipeline:[
-                            {
-                                $match:{
-                                    $expr:{
-                                        $in:['$_id','$$proList']
-                                    }
-                                }
-                            }
-                        ],
-                        as:'cartItems'
-                    }
-                }
+                        localField:'item',
+                        foreignField:'_id',
+                        as:'product'
 
+                    }
+                },
+                {
+                    $project:{
+                       _id:1, item:1,quantity:1,product:{$arrayElemAt:['$product',0]}
+                    } 
+                }
             ]).toArray()
-            console.log(cartItems)
-            resolve(cartItems[0].cartItems)
+                
+            console.log('cartItems'+cartItems)
+            resolve(cartItems)
 
         })
         
@@ -131,5 +138,34 @@ module.exports={
             resolve(count)
         })
        
+    },
+    changeProductQuantity:(details)=>{
+        
+        return new Promise((resolve,reject)=>{
+            details.count=parseInt(details.count)
+            details.quantity=parseInt(details.quantity)
+
+            if(details.quantity==1 && details.count==-1)
+            {
+                db.get().collection(collection.CART_COLLECTION).updateOne({_id:objectId(details.cart)},
+                {
+                    $pull:
+                    {
+                        products:{item:objectId(details.product)}
+                    }
+                }).then((response)=>{
+                    resolve({removeProduct:true})
+                })
+            }
+            else{
+            db.get().collection(collection.CART_COLLECTION).updateOne({_id:objectId(details.cart),'products.item':objectId(details.product)},
+               
+            {
+                $inc:{'products.$.quantity':details.count}
+            }).then((response)=>{
+                resolve(true)
+            })
+        }
+        })
     }
 }

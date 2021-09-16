@@ -75,9 +75,10 @@ const verifyLogin=(req,res,next)=>{
 
 router.get('/cart',verifyLogin,(req,res)=>{
   console.log('cart')
-  userHelper.getCartProducts(req.session.user._id).then((products)=>{
-    console.log('products:'+products)
-    res.render('./user/cart',{products,user:req.session.user})
+  userHelper.getCartProducts(req.session.user._id).then((cartItems)=>{
+    console.log('products:'+cartItems)
+   
+    res.render('./user/cart',{cartItems,user:req.session.user})
   })
   
 }) 
@@ -91,6 +92,11 @@ router.get('/add-to-cart/:id',(req,res)=>{
    userHelper.addToCart(req.params.id,req.session.user._id).then(()=>{
    //res.redirect('/')
    res.json({status:true})
+  })
+})
+router.post('/change-product-quantity',(req,res)=>{
+  userHelper.changeProductQuantity(req.body).then((response)=>{
+    res.json(response)
   })
 })
 
